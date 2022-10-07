@@ -1,0 +1,19 @@
+{
+  "name": "fastify-swagger-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/cors": "^8.1.0",
+    "@fastify/swagger": "^7.6.1",
+    "fastify": "^4.7.0",
+    "nodemon": "^2.0.20"
+  }
+}
