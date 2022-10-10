@@ -18,22 +18,24 @@ await app.register(swagger, {
     swagger: {
         info: { title: 'fastify-api' },
         tags: [
-            { name: 'user', description: 'User related end-points' },
-            { name: 'case', description: 'Case related end-points' }
+            //{ name: 'user', description: 'User related end-points' },
+            { name: 'case', description: 'Case related end-points' },
+            //{ name: 'appointment', description: 'Appointment related end-points' },
+            //{ name: 'log', description: 'Log related end-points' }
         ],
     },
 })
 
 
 
-app.register(userRoutes);
-app.register(caseRoutes);
-app.register(appointmentRoutes);
-app.register(logRoutes);
 
-app.get("/", (req, reply) => {
-    reply.send();
-});
+// app.get("/", (req, reply) => {
+//     reply.send();
+// });
+//app.register(userRoutes);
+app.register(caseRoutes);
+//app.register(appointmentRoutes);
+//app.register(logRoutes);
 
 
 // The server waiting loop.

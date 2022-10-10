@@ -9,8 +9,8 @@ const NewUser = {
         email: { type: "string", format: "email" },
         role: { type: "string" },
         state: { type: "string" },
-        created_time: { type: "string", format: "date-time" },
-        confirmed_time: { type: "string", format: "date-time" }
+        create_time: { type: "string", format: "date-time" },
+        confirm_time: { type: "string", format: "date-time" }
     },
 }
 
@@ -22,8 +22,8 @@ const User = {
         email: { type: "string", format: "email" },
         role: { type: "string" },
         state: { type: "string" },
-        created_time: { type: "string", format: "date-time" },
-        confirmed_time: { type: "string", format: "date-time" }
+        create_time: { type: "string", format: "date-time" },
+        confirm_time: { type: "string", format: "date-time" }
     },
 }
 
