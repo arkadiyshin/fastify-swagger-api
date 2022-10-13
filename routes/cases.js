@@ -54,7 +54,7 @@ const CaseExtendSchema = {
 const CaseFullSchema = {
     type: "object",
     properties: {
-        ...{...CaseCoreSchema.properties}, ...{...CaseExtendSchema.properties},
+        ...{ ...CaseCoreSchema.properties }, ...{ ...CaseExtendSchema.properties },
         create_time: { type: "string", format: "date-time" },
         assigned_time: { type: "string", format: "date-time" },
         confirmed_time: { type: "string", format: "date-time" },
@@ -64,6 +64,24 @@ const CaseFullSchema = {
         inspector: { type: "string" },
         manager_id: { type: "integer" },
         manager: { type: "string" },
+    }
+}
+
+const CaseItemCoreSchema = {
+    type: "object",
+    properties: {
+        room: { type: "integr" },
+        description: { type: "string" }
+    }
+}
+
+const CaseItemFullSchema = {
+    type: "object",
+    properties: {
+        ...{ ...CaseItemCoreSchema.properties },
+        room_title: { type: "string" },
+        photo_link: { type: "string" },
+        quantity: { type: "integer" }
     }
 }
 
@@ -96,7 +114,7 @@ const getCasesOpts = {
 }
 
 const getCaseOpts = {
-    
+
     schema: {
         summary: "Get single case by id",
         description: "Get single case by id",
@@ -105,7 +123,9 @@ const getCaseOpts = {
             id: { type: "integer" },
         },
         response: {
-            200: CaseFullSchema,
+            200: {
+                CaseFullSchema
+            },
         },
     },
     handler: getCase,
@@ -156,7 +176,7 @@ const changeCaseOpts = {
         },
     },
 
-    handler: ()=>{},
+    handler: () => { },
 }
 
 const assignCaseOpts = {
@@ -176,7 +196,7 @@ const assignCaseOpts = {
         },
     },
 
-    handler: ()=>{},
+    handler: () => { },
 }
 
 const reAssignCaseOpts = {
@@ -196,7 +216,7 @@ const reAssignCaseOpts = {
         },
     },
 
-    handler: ()=>{},
+    handler: () => { },
 }
 
 const declineCaseOpts = {
@@ -215,7 +235,7 @@ const declineCaseOpts = {
         },
     },
 
-    handler: ()=>{},
+    handler: () => { },
 }
 
 const acceptCaseOpts = {
@@ -234,7 +254,7 @@ const acceptCaseOpts = {
         },
     },
 
-    handler: ()=>{},
+    handler: () => { },
 }
 
 const invalidateCaseOpts = {
@@ -253,7 +273,7 @@ const invalidateCaseOpts = {
         },
     },
 
-    handler: ()=>{},
+    handler: () => { },
 }
 
 const fillAllCaseOpts = {
@@ -272,7 +292,7 @@ const fillAllCaseOpts = {
         },
     },
 
-    handler: ()=>{},
+    handler: () => { },
 }
 
 const quoteCaseOpts = {
@@ -291,7 +311,7 @@ const quoteCaseOpts = {
         },
     },
 
-    handler: ()=>{},
+    handler: () => { },
 }
 
 const closeCaseOpts = {
@@ -310,9 +330,24 @@ const closeCaseOpts = {
         },
     },
 
-    handler: ()=>{},
+    handler: () => { },
 }
 
+const deleteCaseOpts = {
+    schema: {
+        summary: "Delete case by id",
+        description: "Delete case by id",
+        tags: ['case'],
+        params: {
+            id: { type: "integer" },
+        },
+        response: {
+            201: CaseCoreSchema,
+        },
+    },
+
+    handler: updateCase,
+}
 
 function caseRoutes(fastify, options, done) {
     fastify.get("/cases", getCasesOpts)
@@ -329,8 +364,8 @@ function caseRoutes(fastify, options, done) {
     fastify.patch("/cases/:caseId/fillAll", fillAllCaseOpts)
     fastify.patch("/cases/:caseId/quote", quoteCaseOpts)
     fastify.patch("/cases/:caseId/close", closeCaseOpts)
-    
-    // fastify.delete("/cases/:id", deleteCaseOpts)
+
+    // fastify.delete("/cases/:caseId", deleteCaseOpts)
 
     done()
 }

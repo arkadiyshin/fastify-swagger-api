@@ -27,6 +27,13 @@ const User = {
     },
 }
 
+
+const UserConfirmSchema = {
+    username: { type: "string" },
+    password: { type: "string", format: "password" },
+}
+
+
 const getUsersOpts = {
     
     schema: {
@@ -74,15 +81,37 @@ const getUserOpts = {
 const postUserOpts = {
     
     schema: {
-        descriptions: "",
+        summary: "Create a new user",
+        description: "Create a new user",
         tags: ['user'],
-        body: NewUser,
+        body: { email: { type: "string", format: "email" } },
         response: {
-            201: User,
+            200: {
+                description: 'successful operation',
+                type: 'string'
+            },
         },
     },
 
     handler: addUser,
+}
+
+const confirmUserOpts = {
+    
+    schema: {
+        summary: "Confirm user",
+        description: "Confirm user",
+        tags: ['user'],
+        body: { email: { type: "string", format: "email" } },
+        response: {
+            200: {
+                description: 'successful operation',
+                type: 'string'
+            },
+        },
+    },
+
+    handler: ()=>{},
 }
 
 const putUserOpts = {
@@ -94,7 +123,10 @@ const putUserOpts = {
         },
         body: NewUser,
         response: {
-            201: User,
+            201: {
+                description: 'successful operation',
+                type: 'string'
+            },
         },
     },
 
@@ -102,31 +134,19 @@ const putUserOpts = {
 }
 
 
-const deleteUserOpts = {
-    schema: {
-        descriptions: "",
-        tags: ['user'],
-        params: {
-            id: { type: 'number' },
-        },
-        response: {
-            201: {
-                properties: {
-                    message: { type: 'string' }
-                }
-            },
-        },
-    },
-
-    handler: deleteUser,
-}
-
 function userRoutes(fastify, options, done) {
+    
     fastify.get("/users", getUsersOpts)
     fastify.get("/users/:id", getUserOpts)
-    fastify.post("/users", postUserOpts)
-    fastify.put("/users/:id", putUserOpts)
+    fastify.post("/users/register/", postUserOpts)
+    
+    fastify.patch("/users/:id/confirm/", confirmUserOpts)
+    fastify.patch("/users/:id/changeActivity/", changeActivityUserOpts)
+    fastify.patch("/users/:id", updateUserOpts)
+    fastify.patch("/users/:id/changeRole", changeUserRoleOpts)
+
     fastify.delete("/users/:id", deleteUserOpts)
+
     done()
 }
 
