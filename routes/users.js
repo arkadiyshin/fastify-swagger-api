@@ -1,154 +1,252 @@
-import { getUsers, getUser, addUser, updateUser, deleteUser } from "../controllers/users.js";
+import {
+    getUsers,
+    getUser,
+    addUser,
+    updateUser,
+    deleteUser,
+} from "../controllers/users.js";
 
-const NewUser = {
+const newUserCoreSchema = {
+    type: "object",
+    properties: {
+        email: { type: "string" },
+    },
+};
+
+const extendNewUserCoreSchema = {
     type: "object",
     properties: {
         id: { type: "integer" },
         username: { type: "string" },
-        password: { type: "string", format: "password" },
-        email: { type: "string", format: "email" },
+        password: { type: "string"},
+        ...{ ...newUserCoreSchema.properties },
         role: { type: "string" },
-        state: { type: "string" },
-        create_time: { type: "string", format: "date-time" },
-        confirm_time: { type: "string", format: "date-time" }
     },
-}
+};
 
-const User = {
+// const coreUserRoleSchema = {
+//   type: "object",
+//   properties: {
+//     inspector_role: { type: "string" },
+//     manager_role: { type: "string" },
+//   },
+// };
+
+const coreUserSchema = {
     type: "object",
     properties: {
-        id: { type: "integer" },
-        username: { type: "string" },
-        email: { type: "string", format: "email" },
-        role: { type: "string" },
+        //...{ ...extendNewUserCoreSchema.properties },
         state: { type: "string" },
-        create_time: { type: "string", format: "date-time" },
-        confirm_time: { type: "string", format: "date-time" }
+        created_time: { type: "string" },
+        confirmed_time: { type: "string" },
     },
-}
+};
 
-
-const UserConfirmSchema = {
-    username: { type: "string" },
-    password: { type: "string", format: "password" },
-}
-
+// const UserConfirmSchema = {
+//   username: { type: "string" },
+//   password: { type: "string", format: "password" },
+// };
 
 const getUsersOpts = {
-    
     schema: {
-        descriptions: "list of users",
-        tags: ['user'],
+        descriptions: "get list of all users",
+        tags: ["user"],
         params: {
-            type: 'object',
-            properties: {
-                role: {
-                    type: 'string',
-                    description: 'the user role'
-                },
-                state: {
-                    type: 'string',
-                    description: 'the user state'
-                },
-                confirmed: {
-                    type: 'boolean',
-                    description: 'the user confirmed or not'
-                }
-            },
+            role: { type: "string" },
         },
         response: {
             200: {
                 type: "array",
-                items: User,
+                items: coreUserSchema,
             },
         },
     },
     handler: getUsers,
-}
+};
 
 const getUserOpts = {
-    
     schema: {
-        descriptions: "",
-        tags: ['user'],
+        descriptions: "list of users",
+        tags: ["user"],
+        params: {
+            id: { type: "integer" },
+            role: { type: "string" },
+        },
         response: {
-            200: User,
+            200: {
+                type: "array",
+                items: coreUserSchema,
+            },
         },
     },
     handler: getUser,
-}
+};
 
-const postUserOpts = {
-    
+const getUsersRoleOpts = {
+    schema: {
+        descriptions: "get list of all users",
+        tags: ["user-Role"],
+        params: {
+            role: { type: "string" },
+        },
+        response: {
+            200: {
+                type: "array",
+                items: coreUserSchema,
+            },
+        },
+    },
+    handler: getUser,
+};
+
+const postNewUserOpts = {
     schema: {
         summary: "Create a new user",
         description: "Create a new user",
-        tags: ['user'],
-        body: { email: { type: "string", format: "email" } },
+        tags: ["new-user"],
+        body: { newUserCoreSchema },
         response: {
             200: {
-                description: 'successful operation',
-                type: 'string'
+                description: "successful operation",
+                type: "string",
             },
         },
     },
 
     handler: addUser,
-}
+};
 
-const confirmUserOpts = {
-    
+const confirmedNewUserOpts = {
     schema: {
-        summary: "Confirm user",
+        summary: "After email token comfirmation all new user will continue to fill out the rest of the registration form",
         description: "Confirm user",
-        tags: ['user'],
-        body: { email: { type: "string", format: "email" } },
+        tags: ["user"],
+        params: {
+            id: { type: "integer" },
+        },
+        body: newUserCoreSchema,
         response: {
             200: {
-                description: 'successful operation',
-                type: 'string'
+                type: "array",
+                items: coreUserSchema,
             },
         },
     },
 
-    handler: ()=>{},
-}
+    handler: () => { },
+};
 
-const putUserOpts = {
+const coreUpdateUserOpts = {
     schema: {
-        descriptions: "",
-        tags: ['user'],
+        descriptions: "General profile update endpoint",
+        tags: ["user"],
         params: {
-            id: { type: 'number' },
+            id: { type: "number" },
         },
-        body: NewUser,
+        body: coreUserSchema,
         response: {
             201: {
-                description: 'successful operation',
-                type: 'string'
+                type: "array",
+                items: coreUserSchema,
+            },
+        },
+
+    },
+
+    handler: updateUser,
+};
+
+const changeUserRoleOpts = {
+    schema: {
+        descriptions: "change user role ",
+        tags: ["user"],
+        params: {
+            id: { type: "integer" },
+        },
+        body: { ...coreUserSchema.properties.role },
+        response: {
+            201: {
+                type: "array",
+                items: coreUserSchema.properties,
             },
         },
     },
 
     handler: updateUser,
-}
+};
 
+const userSetNewPasswordOpts = {
+    schema: {
+        descriptions: "this is where you set a new password",
+        tags: ["user"],
+        params: {
+            id: { type: "number" },
+        },
+        body: { new_Password: { type: "string" } },
+        response: {
+            201: {
+                type: "array",
+                items: coreUserSchema,
+            },
+        },
+    },
+
+    handler: updateUser,
+};
+
+const userForgotPassOpts = {
+    schema: {
+        descriptions:
+            "if you forget your password, this endpoint will will ask for your email address if email already exists you will be redirected to the new password endpoint",
+        tags: ["user"],
+        params: {
+            id: { type: "number" },
+        },
+        body: newUserCoreSchema.properties.email,
+        response: {
+            201: 
+            {
+                type: "array",
+                items: userSetNewPasswordOpts,
+            },
+        },
+    },
+
+    handler: updateUser,
+};
+
+const deleteUserOpts = {
+    schema: {
+        descriptions: "for dev team only, delete user",
+        tags: ["delete-user"],
+        params: {
+            id: { type: "number" },
+        },
+        response: {
+            201: {
+                type: 'array',
+                items: coreUserSchema,
+            },
+        },
+    },
+
+    handler: updateUser,
+};
 
 function userRoutes(fastify, options, done) {
-    
-    fastify.get("/users", getUsersOpts)
-    fastify.get("/users/:id", getUserOpts)
-    fastify.post("/users/register/", postUserOpts)
-    
-    fastify.patch("/users/:id/confirm/", confirmUserOpts)
-    fastify.patch("/users/:id/changeActivity/", changeActivityUserOpts)
-    fastify.patch("/users/:id", updateUserOpts)
-    fastify.patch("/users/:id/changeRole", changeUserRoleOpts)
+    fastify.get("/users", getUsersOpts);
+    fastify.get("/users/:id", getUserOpts);
+    fastify.get("/users/role/", getUsersRoleOpts);
+    fastify.post("/users/register/", postNewUserOpts);
+    fastify.post("/users/:id/confirm/", confirmedNewUserOpts);
+    fastify.put("/users/:id/", coreUpdateUserOpts);
 
-    fastify.delete("/users/:id", deleteUserOpts)
+    fastify.patch("/users/:id/forgotPassword/", userForgotPassOpts);
+    fastify.patch("/users/:id/setNewPassword/", userSetNewPasswordOpts);
+    fastify.patch("/users/:id/changeRole", changeUserRoleOpts);
+    fastify.delete("/users/:id", deleteUserOpts);
 
-    done()
+    done();
 }
 
 export default userRoutes;
-
