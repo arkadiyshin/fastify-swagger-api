@@ -32,7 +32,7 @@ await app.register(swagger, {
 // app.get("/", (req, reply) => {
 //     reply.send();
 // });
-//app.register(userRoutes);
+app.register(userRoutes);
 app.register(caseRoutes);
 //app.register(appointmentRoutes);
 //app.register(logRoutes);
