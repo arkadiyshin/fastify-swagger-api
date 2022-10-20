@@ -1,53 +1,27 @@
 import { getAppointments, getAppointment, addAppointment, updateAppointment, deleteAppointment } from "../controllers/appointments.js";
 
-const NewAppointment = {
-    type: "object",
-    properties: {
-        id: { type: "integer" },
-        appointmentname: { type: "string" },
-        password: { type: "string", format: "password" },
-        email: { type: "string", format: "email" },
-        role: { type: "string" },
-        state: { type: "string" },
-        created_time: { type: "string", format: "date-time" },
-        confirmed_time: { type: "string", format: "date-time" }
-    },
-}
-
 const Appointment = {
     type: "object",
     properties: {
         id: { type: "integer" },
-        appointmentname: { type: "string" },
-        email: { type: "string", format: "email" },
-        role: { type: "string" },
-        state: { type: "string" },
-        created_time: { type: "string", format: "date-time" },
-        confirmed_time: { type: "string", format: "date-time" }
+        case_id: { type: "integer" },
+        date: { type: "string", format: "date" },
+        time_from: { type: "string", format: "time" },
+        time_to: { type: "string", format: "time" }
     },
 }
+
 
 // Options to get all items
 const getAppointmentsOpts = {
     schema: {
-        descriptions: "list of appointments",
+        summary: "Get list of appointments",
+        descriptions: "Get list of appointments",
         tags: ['appointment'],
-        params: {
-            type: 'object',
-            properties: {
-                role: {
-                    type: 'string',
-                    description: 'the appointment role'
-                },
-                state: {
-                    type: 'string',
-                    description: 'the appointment state'
-                },
-                confirmed: {
-                    type: 'boolean',
-                    description: 'the appointment confirmed or not'
-                }
-            },
+        querystring: {
+            case_id: { type: "integer" },
+            date_from: { type: "string", format: "date"  },
+            date_to: { type: "string", format: "date"  },
         },
         response: {
             200: {
@@ -59,10 +33,14 @@ const getAppointmentsOpts = {
     handler: getAppointments,
 }
 
-const getAppointmentOpts = {
+const getAppointmentByCaseOpts = {
     schema: {
-        descriptions: "list of appointments",
+        summary: "Get single appointment",
+        descriptions: "Get single appointment",
         tags: ['appointment'],
+        params: {
+            case_id: { type: 'number' },
+        },
         response: {
             200: Appointment,
         },
@@ -73,9 +51,10 @@ const getAppointmentOpts = {
 
 const postAppointmentOpts = {
     schema: {
-        descriptions: "list of appointments",
+        summary: "Create a new appointment",
+        descriptions: "Create a new appointment",
         tags: ['appointment'],
-        body: NewAppointment,
+        body: Appointment,
         response: {
             201: Appointment,
         },
@@ -84,14 +63,16 @@ const postAppointmentOpts = {
     handler: addAppointment,
 }
 
-const putAppointmentOpts = {
+const putAppointmentByCaseOpts = {
     schema: {
-        descriptions: "list of appointments",
+        summary: "Change an appointment",
+        descriptions: "Change an appointment",
         tags: ['appointment'],
         params: {
+            case_id: { type: 'number' },
             id: { type: 'number' },
         },
-        body: NewAppointment,
+        body: Appointment,
         response: {
             201: Appointment,
         },
@@ -101,11 +82,13 @@ const putAppointmentOpts = {
 }
 
 
-const deleteAppointmentOpts = {
+const deleteAppointmentByCaseOpts = {
     schema: {
-        descriptions: "list of appointments",
+        summary: "Delete an appointment",
+        descriptions: "Delete an appointment",
         tags: ['appointment'],
         params: {
+            case_id: { type: 'number' },
             id: { type: 'number' },
         },
         response: {
@@ -122,10 +105,10 @@ const deleteAppointmentOpts = {
 
 function appointmentRoutes(fastify, options, done) {
     fastify.get("/appointments", getAppointmentsOpts)
-    fastify.get("/appointments/:id", getAppointmentOpts)
+    fastify.get("/appointments/:case_id", getAppointmentByCaseOpts)
     fastify.post("/appointments", postAppointmentOpts)
-    fastify.put("/appointments/:id", putAppointmentOpts)
-    fastify.delete("/appointments/:id", deleteAppointmentOpts)
+    fastify.put("/appointments/:case_id/:id", putAppointmentByCaseOpts)
+    fastify.delete("/appointments/:case_id/:id", deleteAppointmentByCaseOpts)
     done()
 }
 

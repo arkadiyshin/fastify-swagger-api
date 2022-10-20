@@ -51,7 +51,7 @@ const getUsersOpts = {
     schema: {
         descriptions: "get list of all users",
         tags: ["user"],
-        params: {
+        querystring: {
             role: { type: "string" },
         },
         response: {
@@ -70,7 +70,7 @@ const getUserOpts = {
         tags: ["user"],
         params: {
             id: { type: "integer" },
-            role: { type: "string" },
+        //    role: { type: "string" },
         },
         response: {
             200: {
@@ -85,7 +85,7 @@ const getUserOpts = {
 const getUsersRoleOpts = {
     schema: {
         descriptions: "get list of all users",
-        tags: ["user-Role"],
+        tags: ["user"],
         params: {
             role: { type: "string" },
         },
@@ -103,7 +103,7 @@ const postNewUserOpts = {
     schema: {
         summary: "Create a new user",
         description: "Create a new user",
-        tags: ["new-user"],
+        tags: ["user"],
         body: { newUserCoreSchema },
         response: {
             200: {
@@ -218,7 +218,7 @@ const userForgotPassOpts = {
 const deleteUserOpts = {
     schema: {
         descriptions: "for dev team only, delete user",
-        tags: ["delete-user"],
+        tags: ["user"],
         params: {
             id: { type: "number" },
         },

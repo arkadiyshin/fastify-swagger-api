@@ -85,6 +85,15 @@ const CaseItemFullSchema = {
     }
 }
 
+// const CasePhotoSchema = {
+//     type: "object",
+//     properties: {
+//         case_id: { type: "integr" },
+//         room_id: { type: "string" },
+//         room_id: { type: "string" }
+//         case_data: { type: "string" }
+//     }
+// }
 
 
 // Options to get all items
@@ -93,7 +102,7 @@ const getCasesOpts = {
         summary: "Get list of cases",
         description: "Get list of cases filtered by: data ceration, state, inspector, manager",
         tags: ['case'],
-        params: {
+        querystring: {
             date_from: { type: "string", format: "date-time" },
             date_to: { type: "string", format: "date-time" },
             state_id: { type: "integer" },
@@ -103,6 +112,7 @@ const getCasesOpts = {
             manager_id: { type: "integer" },
             manager: { type: "string" },
         },
+        required: ["date_from"],
         response: {
             200: {
                 type: "array",

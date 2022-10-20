@@ -15,12 +15,12 @@ await app.register(cors, {});
 await app.register(swagger, {
     exposeRoute: true,
     routePrefix: '/docs',
-    swagger: {
+    openapi: {
         info: { title: 'fastify-api' },
         tags: [
-            //{ name: 'user', description: 'User related end-points' },
+            { name: 'user', description: 'User related end-points' },
             { name: 'case', description: 'Case related end-points' },
-            //{ name: 'appointment', description: 'Appointment related end-points' },
+            { name: 'appointment', description: 'Appointment related end-points' },
             //{ name: 'log', description: 'Log related end-points' }
         ],
     },
@@ -34,7 +34,7 @@ await app.register(swagger, {
 // });
 app.register(userRoutes);
 app.register(caseRoutes);
-//app.register(appointmentRoutes);
+app.register(appointmentRoutes);
 //app.register(logRoutes);
 
 
