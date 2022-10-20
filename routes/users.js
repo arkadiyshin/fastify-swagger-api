@@ -9,7 +9,7 @@ import {
 const newUserCoreSchema = {
   type: "object",
   properties: {
-    email: { type: "string", format: "email" },
+    email: { type: "string"},
   },
 };
 
@@ -18,7 +18,7 @@ const extendNewUserCoreSchema = {
   properties: {
     id: { type: "integer" },
     username: { type: "string" },
-    password: { type: "string", format: "password" },
+    password: { type: "string"},
     ...{ ...newUserCoreSchema.properties },
     role: { type: "string" },
   },
@@ -104,7 +104,7 @@ const postNewUserOpts = {
     summary: "Create a new user",
     description: "Create a new user",
     tags: ["new-user"],
-    body: { newUserCoreSchema },
+    body: newUserCoreSchema,
     response: {
       200: {
         description: "successful operation",
@@ -118,7 +118,7 @@ const postNewUserOpts = {
 
 const confirmedNewUserOpts = {
   schema: {
-    // summary: "After email token comfirmation all new user will continue to fill out the rest of the registration form",
+    summary: "After email token comfirmation all new user will continue to fill out the rest of the registration form",
     description: "Confirm user",
     tags: ["extended-new-user"],
     params: {
@@ -162,11 +162,11 @@ const changeUserRoleOpts = {
     params: {
       id: { type: "integer" },
     },
-    body:  { ...coreUserSchema.properties.role },
+    body:  coreUserSchema.properties.role,
     response: {
       201: {
         description: "successful operation",
-        items: coreUserSchema.properties,
+        items: coreUserSchema,
       },
     },
   },
@@ -201,7 +201,7 @@ const userForgotPassOpts = {
     params: {
       id: { type: "number" },
     },
-    body: { ...newUserCoreSchema.properties.email },
+    body: newUserCoreSchema.properties.email,
     response: {
       201: {
         description: "successful operation",
