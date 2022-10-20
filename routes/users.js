@@ -6,50 +6,42 @@ import {
     deleteUser,
 } from "../controllers/users.js";
 
-const newUserCoreSchema = {
+const newUserSchema = {
+    //$id: "newUser",
     type: "object",
     properties: {
-        email: { type: "string" },
+        email_address: { type: "string", format: "email" },
     },
 };
 
-const extendNewUserCoreSchema = {
+const newUserExtendedSchema = {
+    //$id: "extedNewUser",
     type: "object",
     properties: {
         id: { type: "integer" },
         username: { type: "string" },
-        password: { type: "string"},
-        ...{ ...newUserCoreSchema.properties },
+        password: { type: "string", format: "password" },
+        ...{ ...newUserSchema.properties },
         role: { type: "string" },
     },
 };
 
-// const coreUserRoleSchema = {
-//   type: "object",
-//   properties: {
-//     inspector_role: { type: "string" },
-//     manager_role: { type: "string" },
-//   },
-// };
-
-const coreUserSchema = {
+const userFullSchema = {
+    //$id: "fullUser",
     type: "object",
     properties: {
-        //...{ ...extendNewUserCoreSchema.properties },
+        ...{ ...newUserExtendedSchema.properties },
         state: { type: "string" },
         created_time: { type: "string" },
         confirmed_time: { type: "string" },
     },
 };
 
-// const UserConfirmSchema = {
-//   username: { type: "string" },
-//   password: { type: "string", format: "password" },
-// };
 
 const getUsersOpts = {
     schema: {
-        descriptions: "get list of all users",
+        summary: "user list",
+        description: "get list of all users: role-filter",
         tags: ["user"],
         querystring: {
             role: { type: "string" },
@@ -57,7 +49,7 @@ const getUsersOpts = {
         response: {
             200: {
                 type: "array",
-                items: coreUserSchema,
+                items: userFullSchema,
             },
         },
     },
@@ -66,33 +58,19 @@ const getUsersOpts = {
 
 const getUserOpts = {
     schema: {
-        descriptions: "list of users",
+        summary: "single user list",
+        description: "get list of a single users: role-filter, id-filter",
         tags: ["user"],
         params: {
-            id: { type: "integer" },
-        //    role: { type: "string" },
+            id: { type: "string" },
         },
-        response: {
-            200: {
-                type: "array",
-                items: coreUserSchema,
-            },
-        },
-    },
-    handler: getUser,
-};
-
-const getUsersRoleOpts = {
-    schema: {
-        descriptions: "get list of all users",
-        tags: ["user"],
-        params: {
+        querystring: {
             role: { type: "string" },
         },
         response: {
             200: {
                 type: "array",
-                items: coreUserSchema,
+                items: userFullSchema,
             },
         },
     },
@@ -102,13 +80,13 @@ const getUsersRoleOpts = {
 const postNewUserOpts = {
     schema: {
         summary: "Create a new user",
-        description: "Create a new user",
+        description: "Create a new case with only email address before confirmation",
         tags: ["user"],
-        body: { newUserCoreSchema },
+        body: newUserSchema.properties.email_address,
         response: {
-            200: {
-                description: "successful operation",
-                type: "string",
+            201: {
+                type: "array",
+                items: newUserSchema,
             },
         },
     },
@@ -118,17 +96,18 @@ const postNewUserOpts = {
 
 const confirmedNewUserOpts = {
     schema: {
-        summary: "After email token comfirmation all new user will continue to fill out the rest of the registration form",
-        description: "Confirm user",
+        summary: "Confirm user",
+        description:
+            "After email token comfirmation all new user will continue to fill out the rest of the registration form",
         tags: ["user"],
         params: {
             id: { type: "integer" },
         },
-        body: newUserCoreSchema,
+        body: newUserExtendedSchema.properties,
         response: {
-            200: {
+            201: {
                 type: "array",
-                items: coreUserSchema,
+                items: userFullSchema,
             },
         },
     },
@@ -138,55 +117,39 @@ const confirmedNewUserOpts = {
 
 const coreUpdateUserOpts = {
     schema: {
-        descriptions: "General profile update endpoint",
-        tags: ["user"],
-        params: {
-            id: { type: "number" },
-        },
-        body: coreUserSchema,
-        response: {
-            201: {
-                type: "array",
-                items: coreUserSchema,
-            },
-        },
-
-    },
-
-    handler: updateUser,
-};
-
-const changeUserRoleOpts = {
-    schema: {
-        descriptions: "change user role ",
+        summary: "Update user information",
+        description: "update all user information",
         tags: ["user"],
         params: {
             id: { type: "integer" },
         },
-        body: { ...coreUserSchema.properties.role },
+        body: userFullSchema,
         response: {
             201: {
                 type: "array",
-                items: coreUserSchema.properties,
+                items: userFullSchema,
             },
         },
+
     },
 
     handler: updateUser,
 };
 
+
 const userSetNewPasswordOpts = {
     schema: {
-        descriptions: "this is where you set a new password",
+        summary: "set a new password if you forgot your previous password",
+        description: "update user password",
         tags: ["user"],
         params: {
-            id: { type: "number" },
+            id: { type: "integer" },
         },
         body: { new_Password: { type: "string" } },
         response: {
             201: {
                 type: "array",
-                items: coreUserSchema,
+                items: userFullSchema,
             },
         },
     },
@@ -196,18 +159,17 @@ const userSetNewPasswordOpts = {
 
 const userForgotPassOpts = {
     schema: {
-        descriptions:
-            "if you forget your password, this endpoint will will ask for your email address if email already exists you will be redirected to the new password endpoint",
+        summary: "use user email address to request to set a new password",
+        description: "user forgot password",
         tags: ["user"],
         params: {
-            id: { type: "number" },
+            id: { type: "integer" },
         },
-        body: newUserCoreSchema.properties.email,
+        body: newUserSchema.properties.email_address,
         response: {
-            201: 
-            {
+            201: {
                 type: "array",
-                items: userSetNewPasswordOpts,
+                items: { ...userSetNewPasswordOpts.schema },
             },
         },
     },
@@ -217,15 +179,16 @@ const userForgotPassOpts = {
 
 const deleteUserOpts = {
     schema: {
-        descriptions: "for dev team only, delete user",
+        summary: "for dev team only",
+        description: "delete user",
         tags: ["user"],
         params: {
-            id: { type: "number" },
+            id: { type: "integer" },
         },
         response: {
             201: {
-                type: 'array',
-                items: coreUserSchema,
+                type: "array",
+                items: userFullSchema,
             },
         },
     },
@@ -236,14 +199,14 @@ const deleteUserOpts = {
 function userRoutes(fastify, options, done) {
     fastify.get("/users", getUsersOpts);
     fastify.get("/users/:id", getUserOpts);
-    fastify.get("/users/role/", getUsersRoleOpts);
+    //fastify.get("/users/role/", getUsersRoleOpts);
     fastify.post("/users/register/", postNewUserOpts);
     fastify.post("/users/:id/confirm/", confirmedNewUserOpts);
     fastify.put("/users/:id/", coreUpdateUserOpts);
 
     fastify.patch("/users/:id/forgotPassword/", userForgotPassOpts);
     fastify.patch("/users/:id/setNewPassword/", userSetNewPasswordOpts);
-    fastify.patch("/users/:id/changeRole", changeUserRoleOpts);
+    //fastify.patch("/users/:id/changeRole", changeUserRoleOpts);
     fastify.delete("/users/:id", deleteUserOpts);
 
     done();
