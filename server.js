@@ -39,4 +39,4 @@ app.register(caseRoutes);
 
 
 // The server waiting loop.
-await app.listen({ port: 3000 });
+await app.listen({ port: 3001 });
